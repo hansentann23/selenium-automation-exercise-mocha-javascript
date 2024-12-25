@@ -1,16 +1,11 @@
 const { By, until } = require ('selenium-webdriver');
 
-class DashboardPage{
+class DashboardLoggedInPage{
     constructor(driver){
         this.driver = driver;
         this.pageTitle = By.xpath("//img[@alt='Website for automation practice']");
-        this.signUpOrLoginButton = By.xpath("//a[contains(.,'Signup / Login')]");
         this.deleteAccountButton = By.xpath("//a[contains(.,'Delete Account')]");
         this.timeout = 5000;
-    }
-
-    async navigate(){
-        await this.driver.get("https://automationexercise.com/")
     }
 
     async waitAndClick(element) {
@@ -33,11 +28,6 @@ class DashboardPage{
         }
     }
 
-    async navigateToLoginOrSignUpPage (){
-        await this.waitAndClick(this.signUpOrLoginButton);
-        return new (require('./SignUpOrLoginPage'))(this.driver);
-    }
-
     async clickDeleteAccountButton (){
         try{
             await this.driver.wait(until.elementLocated(this.deleteAccountButton), this.timeout);
@@ -49,4 +39,4 @@ class DashboardPage{
     }
 }
 
-module.exports = DashboardPage
+module.exports = DashboardLoggedInPage
