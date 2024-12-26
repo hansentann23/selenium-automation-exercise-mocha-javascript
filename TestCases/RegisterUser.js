@@ -3,9 +3,8 @@ const assert = require('assert');
 const fs = require('fs');
 const DashboardPage = require('../WebComponents/DashboardPage');
 const SignUpPage = require('../WebComponents/SignUpPage');
-const { sign } = require('crypto');
 const AccountCreatedPage = require('../WebComponents/AccountCreatedPage');
-const DashboardLoggedInPage = require('../WebComponents/DashBoardLoggedInPage');
+const AccountDeletedPage = require('../WebComponents/AccountDeletedPage');
 
 const screenshotDir = './screenshots/';
 if (!fs.existsSync(screenshotDir)) {
@@ -71,23 +70,23 @@ describe('Register User', function () {
         const accountCreatedPageTitle = await accountCreatedPage.isOnAccountCreatedPage();
         assert.strictEqual(accountCreatedPageTitle, 'ACCOUNT CREATED!');
         await accountCreatedPage.clickContinueButton();
-        dashboardPage.clickDeleteAccountButton();
+        await dashboardPage.clickDeleteAccountButton();
         isDashboardNavigationRequired = false;
     }); 
 
-    // it('Validate Logged in as user in dashboard and Delete Account', async function(){
-    //     const accountLoggedInDashboardPage = new DashboardLoggedInPage(driver);
-    //     const pageTitle = await accountLoggedInDashboardPage.isOnDashboard();
-    //     assert.strictEqual(pageTitle, true, 'Dashboard Title Page Is Not Visible');
-    //     accountLoggedInDashboardPage.clickDeleteAccountButton();
-    // });
+    it('Validate Account is deleted', async function(){
+        const accountDeletedPage = new AccountDeletedPage(driver);
+        const pageTitle = await accountDeletedPage.isOnAccountDeletedPage();
+        assert.strictEqual(pageTitle, 'ACCOUNT DELETED!', 'Expected title is ACCOUNT DELETED!');
+        await accountDeletedPage.clickContinueButton();
+    });
 
-    // afterEach(async function () {
-    //     const screenshot = await driver.takeScreenshot();
-    //     const sanitizedTitle = this.currentTest.title.replace(/[\/\\:*?"<>|]/g, '_');
-    //     const filePath = `${screenshotDir}${sanitizedTitle}_${Date.now()}_${this.currentTest.state}.png`;
-    //     fs.writeFileSync(filePath, screenshot, 'base64');
-    // });
+    afterEach(async function () {
+        const screenshot = await driver.takeScreenshot();
+        const sanitizedTitle = this.currentTest.title.replace(/[\/\\:*?"<>|]/g, '_');
+        const filePath = `${screenshotDir}${sanitizedTitle}_${Date.now()}_${this.currentTest.state}.png`;
+        fs.writeFileSync(filePath, screenshot, 'base64');
+    });
 
     after(async function () {
         if (driver) {

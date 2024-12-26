@@ -6,6 +6,8 @@ class DashboardPage{
         this.pageTitle = By.xpath("//img[@alt='Website for automation practice']");
         this.signUpOrLoginButton = By.xpath("//a[contains(.,'Signup / Login')]");
         this.deleteAccountButton = By.xpath("//a[contains(.,'Delete Account')]");
+        this.loggedInAs = By.xpath("//b[.='Hansen']");
+        this.logOutButton = By.xpath("//a[contains(.,'Logout')]");
         this.timeout = 5000;
     }
 
@@ -44,6 +46,27 @@ class DashboardPage{
             await this.driver.findElement(this.deleteAccountButton).click();
         }catch(error){
             console.error("Error in clickDeleteAccountButton: Could not find or interact with element.", error);
+            return false;
+        }
+    }
+
+    async isLoggedIn (){
+        try{
+            await this.driver.wait(until.elementLocated(this.loggedInAs), this.timeout);
+            const loggedIn = await this.driver.findElement(this.loggedInAs);
+            return await loggedIn.isDisplayed();
+        }catch(error){
+            console.error("Error in isLoggedIn: Could not find or interact with the page title.", error);
+            return false;
+        }
+    }
+
+    async clickLogOutButton (){
+        try{
+            await this.driver.wait(until.elementLocated(this.logOutButton), this.timeout);
+            await this.driver.findElement(this.logOutButton).click();
+        }catch(error){
+            console.error("Error in clickLogOutButton: Could not find or interact with element.", error);
             return false;
         }
     }
