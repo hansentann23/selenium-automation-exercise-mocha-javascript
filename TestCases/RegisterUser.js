@@ -5,6 +5,12 @@ const DashboardPage = require('../WebComponents/DashboardPage');
 const SignUpPage = require('../WebComponents/SignUpPage');
 const AccountCreatedPage = require('../WebComponents/AccountCreatedPage');
 const AccountDeletedPage = require('../WebComponents/AccountDeletedPage');
+require('dotenv').config();
+
+const browser = process.env.BROWSER;
+const baseUrl = process.env.BASE_URL;
+const signUpUserName = process.env.SIGNUP_USERNAME;
+const signUpEmail = process.env.SIGNUP_EMAIL;
 
 const screenshotDir = './screenshots/';
 if (!fs.existsSync(screenshotDir)) {
@@ -18,13 +24,13 @@ describe('Register User', function () {
     let isDashboardNavigationRequired = true;
 
     before(async function () {
-        driver = await new Builder().forBrowser('chrome').build();
+        driver = await new Builder().forBrowser(browser).build();
     });
 
     beforeEach(async function () {
         if (isDashboardNavigationRequired) {
             dashboardPage = new DashboardPage(driver);
-            await dashboardPage.navigate();
+            await dashboardPage.navigate(baseUrl);
         }
     });
 
@@ -37,7 +43,7 @@ describe('Register User', function () {
         const signUpOrLoginPage = await dashboardPage.navigateToLoginOrSignUpPage();
         const signUpTitle = await signUpOrLoginPage.isOnSignUpOrLoginPage();
         assert.strictEqual(signUpTitle, 'New User Signup!', 'Title is not as expected!');
-        await signUpOrLoginPage.signUp('Hansen', 'hansentandi99@gmail.com');
+        await signUpOrLoginPage.signUp(signUpUserName, signUpEmail);
         isDashboardNavigationRequired = false;
     });
 

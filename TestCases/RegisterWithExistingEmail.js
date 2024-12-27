@@ -3,11 +3,17 @@ const assert = require('assert');
 const fs = require('fs');
 const DashboardPage = require('../WebComponents/DashboardPage');
 const SignUpOrLoginPage = require('../WebComponents/SignUpOrLoginPage');
+require('dotenv').config();
 
 const screenshotDir = './screenshots/';
 if (!fs.existsSync(screenshotDir)) {
     fs.mkdirSync(screenshotDir, { recursive: true });
 }
+
+const browser = process.env.BROWSER;
+const baseUrl = process.env.BASE_URL;
+const signUpUserName = process.env.SIGNUP_USERNAME;
+const signUpExistingEmail = process.env.SIGNUP_EXISTING_EMAIL;
 
 describe('Register User With Existing Email', function () {
     this.timeout(40000);
@@ -16,13 +22,13 @@ describe('Register User With Existing Email', function () {
     let isDashboardNavigationRequired = true;
 
     before(async function () {
-        driver = await new Builder().forBrowser('chrome').build();
+        driver = await new Builder().forBrowser(browser).build();
     });
 
     beforeEach(async function () {
         if (isDashboardNavigationRequired) {
             dashboardPage = new DashboardPage(driver);
-            await dashboardPage.navigate();
+            await dashboardPage.navigate(baseUrl);
         }
     });
 
@@ -35,7 +41,7 @@ describe('Register User With Existing Email', function () {
         const signUpOrLoginPage = await dashboardPage.navigateToLoginOrSignUpPage();
         const signUpTitle = await signUpOrLoginPage.isOnSignUpOrLoginPage();
         assert.strictEqual(signUpTitle, 'New User Signup!', 'Title is not as expected!');
-        await signUpOrLoginPage.signUp('Hansen', 'hansentandi01@gmail.com');
+        await signUpOrLoginPage.signUp(signUpUserName, signUpExistingEmail);
         isDashboardNavigationRequired = false;
     });
 

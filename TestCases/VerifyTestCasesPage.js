@@ -2,20 +2,18 @@ const { Builder } = require('selenium-webdriver');
 const assert = require('assert');
 const fs = require('fs');
 const DashboardPage = require('../WebComponents/DashboardPage');
-const SignUpOrLoginPage = require('../WebComponents/SignUpOrLoginPage');
+const TestCasesPage = require('../WebComponents/TestCasesPage');
 require('dotenv').config();
+
+const browser = process.env.BROWSER;
+const baseUrl = process.env.BASE_URL;
 
 const screenshotDir = './screenshots/';
 if (!fs.existsSync(screenshotDir)) {
     fs.mkdirSync(screenshotDir, { recursive: true });
 }
 
-const browser = process.env.BROWSER;
-const baseUrl = process.env.BASE_URL;
-const invalidEmail = process.env.INVALID_EMAIL;
-const invalidPassword = process.env.INVALID_PASSWORD;
-
-describe('Login Invalid User', function () {
+describe('Verify Test Cases Page', function () {
     this.timeout(40000);
     let driver;
     let dashboardPage;
@@ -37,18 +35,12 @@ describe('Login Invalid User', function () {
         assert.strictEqual(isTitleVisible, true, 'Dashboard Title Page Is Not Visible');
     });
 
-    it('Click on Signup/Login button and Input Invalid Email And Password To Login', async function () {
-        const signUpOrLoginPage = await dashboardPage.navigateToLoginOrSignUpPage();
-        const loginTitle = await signUpOrLoginPage.isOnLoginPage();
-        assert.strictEqual(loginTitle, 'Login to your account', 'Title is not as expected!');
-        await signUpOrLoginPage.logIn(invalidEmail, invalidPassword);
+    it('Navigate to Test Case Page and Validate', async function(){
+        const testCasesPage = new TestCasesPage(driver);
+        await dashboardPage.clickTestCasesButton();
+        const testCasesPageTitle = await testCasesPage.isOnTestCasesPage();
+        assert.strictEqual(testCasesPageTitle, "TEST CASES", "Title is expected to be TEST CASES");
         isDashboardNavigationRequired = false;
-    });
-
-    it('Validate that error message is visible', async function(){
-        const signUpOrLoginPage = new SignUpOrLoginPage(driver);
-        isErrorMessageVisible = await signUpOrLoginPage.invalidAccountErrorMesssage();
-        assert.strictEqual(isErrorMessageVisible, "Your email or password is incorrect!", "Expected Message is Your email or password is incorrect!");
     });
 
     afterEach(async function () {

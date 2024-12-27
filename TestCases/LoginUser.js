@@ -2,11 +2,17 @@ const { Builder } = require('selenium-webdriver');
 const assert = require('assert');
 const fs = require('fs');
 const DashboardPage = require('../WebComponents/DashboardPage');
+require('dotenv').config();
 
 const screenshotDir = './screenshots/';
 if (!fs.existsSync(screenshotDir)) {
     fs.mkdirSync(screenshotDir, { recursive: true });
 }
+
+const browser = process.env.BROWSER;
+const baseUrl = process.env.BASE_URL;
+const loginEmail = process.env.USER_EMAIL;
+const loginPassword = process.env.PASSWORD;
 
 describe('Login User', function () {
     this.timeout(40000);
@@ -15,13 +21,13 @@ describe('Login User', function () {
     let isDashboardNavigationRequired = true;
 
     before(async function () {
-        driver = await new Builder().forBrowser('chrome').build();
+        driver = await new Builder().forBrowser(browser).build();
     });
 
     beforeEach(async function () {
         if (isDashboardNavigationRequired) {
             dashboardPage = new DashboardPage(driver);
-            await dashboardPage.navigate();
+            await dashboardPage.navigate(baseUrl);
         }
     });
 
@@ -34,7 +40,7 @@ describe('Login User', function () {
         const signUpOrLoginPage = await dashboardPage.navigateToLoginOrSignUpPage();
         const loginTitle = await signUpOrLoginPage.isOnLoginPage();
         assert.strictEqual(loginTitle, 'Login to your account', 'Title is not as expected!');
-        await signUpOrLoginPage.logIn('hansentandi01@gmail.com', 'secret_sauce');
+        await signUpOrLoginPage.logIn(loginEmail, loginPassword);
         isDashboardNavigationRequired = false;
     });
 
