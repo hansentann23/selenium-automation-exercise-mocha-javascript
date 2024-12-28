@@ -3,6 +3,7 @@ const assert = require('assert');
 const fs = require('fs');
 const DashboardPage = require('../WebComponents/DashboardPage');
 const ProductsPage = require('../WebComponents/ProductsPage');
+const Product1DetailsPage = require('../WebComponents/Product1DetailsPage');
 require('dotenv').config();
 
 const browser = process.env.BROWSER;
@@ -63,8 +64,27 @@ describe('Verify Products Page', function () {
         ];
         
         expectedProductNames.forEach((currentProduct) => {
-            assert(productsName.includes(currentProduct), `Product '${product}' is not found on the page`);
+            assert(productsName.includes(currentProduct), `Product '${currentProduct}' is not found on the page`);
         });
+        isDashboardNavigationRequired = false;
+    });
+
+    it('Click on first product and verify landed on product page', async function(){
+        const productsPage = new ProductsPage(driver);
+        const product1DetailsPage = new Product1DetailsPage(driver);
+        await productsPage.clickProduct1();
+        const product1DetailsPageTitle = await product1DetailsPage.isOnProduct1DetailsPage();
+        assert.strictEqual(product1DetailsPageTitle, "Blue Top", "Title is expected to be Blue Top");
+        const productCategoryVisible = await product1DetailsPage.isProductCategoryVisible();
+        assert.strictEqual(productCategoryVisible, true, "Product Category is not visible");
+        const productPriceVisible = await product1DetailsPage.isProductPriceVisible();
+        assert.strictEqual(productPriceVisible, true, "Product Price is not visible");
+        const productAvailabilityVisible = await product1DetailsPage.isProductAvailabilityVisible();
+        assert.strictEqual(productAvailabilityVisible, true, "Product Availability is not visible");
+        const productConditionVisible = await product1DetailsPage.isProductConditionVisible();
+        assert.strictEqual(productConditionVisible, true, "Product Condition is not visible");
+        const productBrandVisible = await product1DetailsPage.isProductBrandVisible();
+        assert.strictEqual(productBrandVisible, true, "Product Brand is not visible");
     });
 
     afterEach(async function () {
